@@ -11,20 +11,22 @@ import {
   filterTelemetry,
   getUserNotifications,
 } from '../../features/patient';
+import PatientProfile from '../../features/patient/components/PatientProfile';
+import AppointmentTable from '../../features/patient/components/AppointmentTable';
 
-type Tab = 'Appointments' | 'Medications' | 'Programs' | 'CarePlans' | 'Adherence' | 'Enrollment' | 'Telemetry' | 'Notifications';
+type Tab = 'Profile' | 'Appointments' | 'Medications' | 'Programs' | 'CarePlans' | 'Adherence' | 'Enrollment' | 'Telemetry' | 'Notifications';
 
-const TABS: Tab[] = ['Appointments', 'Medications', 'Programs', 'CarePlans', 'Adherence', 'Enrollment', 'Telemetry', 'Notifications'];
+const TABS: Tab[] = ['Profile', 'Appointments', 'Medications', 'Programs', 'CarePlans', 'Adherence', 'Enrollment', 'Telemetry', 'Notifications'];
 
 export default function PatientDashboard() {
-  const [tab, setTab] = useState<Tab>('Appointments');
+  const [tab, setTab] = useState<Tab>('Profile');
   const [data, setData] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  const fetchers: Record<Tab, () => Promise<{ data: unknown }>> = {
+  const fetchers: Partial<Record<Tab, () => Promise<{ data: unknown }>>> = {
     Appointments: getAllAppointments,
     Medications: getAllMedications,
     Programs: getAllPrograms,
@@ -36,9 +38,10 @@ export default function PatientDashboard() {
   };
 
   useEffect(() => {
+    if (tab === 'Profile') return;
     setLoading(true);
     setError(null);
-    fetchers[tab]()
+    fetchers[tab]!()
       .then((res) => {
         const d = res.data;
         setData(Array.isArray(d) ? d : [d]);
@@ -58,7 +61,14 @@ export default function PatientDashboard() {
           </button>
         ))}
       </div>
-      <ResourceTable title={tab} data={data} loading={loading} error={error} />
+
+      {tab === 'Profile' ? (
+        <PatientProfile userId={user.userId} />
+      ) : tab === 'Appointments' ? (
+        <AppointmentTable />
+      ) : (
+        <ResourceTable title={tab} data={data} loading={loading} error={error} />
+      )}
     </DashboardLayout>
   );
 }

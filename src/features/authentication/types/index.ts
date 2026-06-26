@@ -32,6 +32,14 @@ export interface PinVerifyRequest {
   pin: string;
 }
 
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  roleName: 'Patient' | 'Administrator';
+}
+
 export interface ForgotPasswordRequest {
   email: string;
 }

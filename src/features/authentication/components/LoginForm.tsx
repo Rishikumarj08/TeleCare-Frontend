@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLogin } from '../hooks/useLogin';
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const { login, verifyPin, loading, error, pendingMfa } = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,9 +59,16 @@ export default function LoginForm() {
       <button style={btnStyle} type="submit" disabled={loading}>
         {loading ? 'Signing in…' : 'Sign In'}
       </button>
+      <p style={footerStyle}>
+        Don't have an account?{' '}
+        <span onClick={() => navigate('/register')} style={linkStyle}>Register</span>
+      </p>
     </form>
   );
 }
+
+const footerStyle: React.CSSProperties = { textAlign: 'center', fontSize: 13, color: '#64748b', margin: 0 };
+const linkStyle:   React.CSSProperties = { color: '#1e40af', fontWeight: 600, cursor: 'pointer' };
 
 const formStyle: React.CSSProperties = {
   display: 'flex',

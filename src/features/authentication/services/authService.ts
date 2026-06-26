@@ -3,9 +3,13 @@ import type {
   LoginRequest,
   LoginResponse,
   PinVerifyRequest,
+  RegisterRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
 } from '../types';
+
+export const registerApi = (data: RegisterRequest) =>
+  axiosInstance.post('/api/auth/register', data);
 
 export const loginApi = (data: LoginRequest) =>
   axiosInstance.post<LoginResponse>('/api/auth/login', data);
